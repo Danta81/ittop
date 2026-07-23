@@ -1,4 +1,4 @@
-# ittop: Multi-Workspace Manager for Claude Code, Codex & Co. on Windows
+# ittop: Multi-Workspace Manager for Claude Code, Codex & Co.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform: Windows | macOS](https://img.shields.io/badge/platform-Windows%20%7C%20macOS-0078D6.svg)](#prerequisites)
@@ -15,7 +15,7 @@ Workspaces on Windows and macOS, built for vibe coding.** It's not a replacement
 it's the missing layer around it. Each Terminal's start command is just a plain string, so it
 works just as well for Codex CLI, Gemini CLI, or any other terminal-based coding agent. Quick facts:
 
-- 🪟🍎 **Native desktop app** on Windows (ConPTY) and macOS (experimental, unsigned build, see
+- 🪟🍎 **Native desktop app** on Windows (ConPTY) and macOS (unsigned build, see
   [Getting started](#getting-started)). No WSL, no separate terminal emulator, no cloud account.
 - 🧩 **Workspaces group Terminals**: each Workspace holds any number of Terminals (own folder +
   start command, so any CLI agent works, not just `claude`), opened tiled together with one click.
@@ -83,7 +83,7 @@ hosted/commercial GUI with cloud sync and subscription tiers. ittop is neither:
 
 ## Prerequisites
 
-- Windows 10/11 (primary platform) or macOS (experimental, see below)
+- Windows 10/11 or macOS (Intel or Apple Silicon)
 - [Claude Code CLI](https://claude.com/claude-code) installed and on your `PATH` (the default
   start command for a new workspace is `claude`)
 - Git (optional, only needed for the branch indicator in the sidebar)
@@ -104,7 +104,7 @@ run it, done. `npm install` is only needed if you're building from source.
 🛡️ Every Windows installer is scanned with [VirusTotal](https://www.virustotal.com/) right
 after it's built. The report link is posted in that release's notes.
 
-### macOS (experimental)
+### macOS
 
 macOS builds (Intel `ittop-<version>.dmg` and Apple Silicon `ittop-<version>-arm64.dmg`) are
 published alongside the Windows installer, but they're **ad-hoc signed only, not notarized**
