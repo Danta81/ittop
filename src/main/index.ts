@@ -43,7 +43,11 @@ let tray: Tray | null = null
 let isQuitting = false
 
 function createTray(): void {
-  const trayIcon = nativeImage.createFromPath(icon).resize({ width: 16, height: 16 })
+  // The app icon is a full-color square logo, not an alpha-only silhouette, so it can't be a
+  // macOS template image (that would flatten it to a solid black/white blob). Just size it for
+  // the menu bar instead; Windows keeps the smaller tray-standard size.
+  const size = process.platform === 'darwin' ? 22 : 16
+  const trayIcon = nativeImage.createFromPath(icon).resize({ width: size, height: size })
   tray = new Tray(trayIcon)
   tray.setToolTip('ittop')
   tray.setContextMenu(
@@ -669,7 +673,12 @@ app.whenReady().then(() => {
   setTimeout(() => void updater.checkForUpdates(), 5000)
 
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow()
+    } else {
+      mainWindow?.show()
+      mainWindow?.focus()
+    }
   })
 })
 

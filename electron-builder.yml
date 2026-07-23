@@ -30,9 +30,13 @@ mac:
     - target: zip
       arch: [x64, arm64]
   category: public.app-category.developer-tools
-  # No Apple Developer ID: builds are unsigned/unnotarized. Gatekeeper will refuse to open the
-  # app on a normal double-click; users need "Right-click > Open" the first time (see README).
-  identity: null
+  # No Apple Developer ID, so this can't be a real Developer ID signature or notarization.
+  # `identity: null` (fully unsigned) makes Apple Silicon refuse to even launch the app ("is
+  # damaged and can't be opened" - the kernel requires at least an ad-hoc signature to execute
+  # arm64 code). Leaving `identity` unset lets electron-builder ad-hoc sign automatically
+  # (CSC_IDENTITY_AUTO_DISCOVERY=false in the release workflow stops it from looking for a real
+  # keychain certificate that doesn't exist in CI). Gatekeeper still shows the "unidentified
+  # developer" warning on first open; see README for the right-click-to-open workaround.
   hardenedRuntime: false
 # electron-updater reads this to check/download new versions from GitHub Releases. Publishing a
 # release (electron-builder --publish always) needs a GH_TOKEN with repo access at build time —

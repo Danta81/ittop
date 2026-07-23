@@ -105,14 +105,17 @@ after it's built. The report link is posted in that release's notes.
 
 ### macOS (experimental)
 
-macOS builds (`ittop-<version>.dmg`) are published alongside the Windows installer, but they're
-**unsigned and not notarized** (no Apple Developer account behind this project). Gatekeeper will
-refuse a normal double-click open with "app is damaged" or similar. To open it anyway:
+macOS builds (Intel `ittop-<version>.dmg` and Apple Silicon `ittop-<version>-arm64.dmg`) are
+published alongside the Windows installer, but they're **ad-hoc signed only, not notarized**
+(no Apple Developer account behind this project). Gatekeeper will refuse a normal double-click
+open the first time with "unidentified developer". To open it anyway:
 
 1. Mount the DMG and drag `ittop.app` into `/Applications`.
 2. Right-click `ittop.app` → **Open** → confirm in the dialog that appears (only needed once).
 
-If that still doesn't work, run `xattr -cr /Applications/ittop.app` in Terminal first.
+If you instead see "**ittop** is damaged and can't be opened", that means Gatekeeper's quarantine
+check failed outright (can happen depending on how the file was downloaded); run
+`xattr -cr /Applications/ittop.app` in Terminal, then try opening it again.
 
 ### Build from source (optional)
 

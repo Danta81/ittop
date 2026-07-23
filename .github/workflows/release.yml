@@ -87,10 +87,13 @@ jobs:
 
       - run: npm ci
 
-      # No Apple Developer ID configured, so this build is unsigned/unnotarized (see
-      # electron-builder.yml `mac.identity: null`). Gatekeeper will refuse a normal double-click
-      # open; users need "Right-click > Open" the first time, documented in the README.
+      # No Apple Developer ID configured, so this build is ad-hoc signed only, not notarized
+      # (see electron-builder.yml `mac` section). CSC_IDENTITY_AUTO_DISCOVERY=false stops
+      # electron-builder from looking for a real keychain certificate that doesn't exist on this
+      # runner, so it falls back to ad-hoc signing instead of erroring or leaving it unsigned.
+      # Gatekeeper still shows "unidentified developer" on first open; see README.
       - name: Build and publish (macOS)
         run: npm run build:mac -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
