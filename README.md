@@ -82,16 +82,17 @@ hosted/commercial GUI with cloud sync and subscription tiers. ittop is neither:
 
 ## Prerequisites
 
-- Windows 10/11
+- Windows 10/11 (primary platform) or macOS (experimental, see below)
 - [Claude Code CLI](https://claude.com/claude-code) installed and on your `PATH` (the default
   start command for a new workspace is `claude`)
 - Git (optional, only needed for the branch indicator in the sidebar)
 - [Node.js](https://nodejs.org/) 18 or newer, only if you're building from source instead of
   using the installer
 
-`node-pty` ships prebuilt native binaries (N-API, ABI-stable) for `win32-x64`/`win32-arm64`,
-so a normal `npm install` works out of the box. **No Visual Studio Build Tools required** for
-everyday use. You'd only need them if you ever have to compile `node-pty` from source (see
+`node-pty` ships prebuilt native binaries (N-API, ABI-stable) for `win32-x64`/`win32-arm64` and
+`darwin-x64`/`darwin-arm64`, so a normal `npm install` works out of the box on both platforms.
+**No Visual Studio Build Tools / Xcode Command Line Tools required** for everyday use. You'd
+only need them if you ever have to compile `node-pty` from source (see
 [Troubleshooting](#troubleshooting)).
 
 ## Getting started
@@ -99,8 +100,19 @@ everyday use. You'd only need them if you ever have to compile `node-pty` from s
 **Just want to use it?** Download the installer from [Releases](https://github.com/pottz91/ittop/releases/latest),
 run it, done. `npm install` is only needed if you're building from source.
 
-🛡️ Every installer is scanned with [VirusTotal](https://www.virustotal.com/) right after it's
-built. The report link is posted in that release's notes.
+🛡️ Every Windows installer is scanned with [VirusTotal](https://www.virustotal.com/) right
+after it's built. The report link is posted in that release's notes.
+
+### macOS (experimental)
+
+macOS builds (`ittop-<version>.dmg`) are published alongside the Windows installer, but they're
+**unsigned and not notarized** (no Apple Developer account behind this project). Gatekeeper will
+refuse a normal double-click open with "app is damaged" or similar. To open it anyway:
+
+1. Mount the DMG and drag `ittop.app` into `/Applications`.
+2. Right-click `ittop.app` → **Open** → confirm in the dialog that appears (only needed once).
+
+If that still doesn't work, run `xattr -cr /Applications/ittop.app` in Terminal first.
 
 ### Build from source (optional)
 
@@ -116,15 +128,17 @@ npm run build
 npm start
 ```
 
-To build a distributable Windows installer (NSIS `.exe`):
+To build a distributable installer:
 
 ```bash
-npm run build:win
+npm run build:win    # Windows: NSIS .exe
+npm run build:mac    # macOS: .dmg + .zip (unsigned, run on a Mac)
 ```
 
 The output lands in `dist/` (e.g. `dist/ittop-1.0.0-setup.exe`). Building the
-installer does **not** require Visual Studio Build Tools either: `electron-builder.yml` sets
-`npmRebuild: false` since `node-pty`'s N-API prebuilds are already ABI-compatible with Electron.
+installer does **not** require Visual Studio Build Tools / Xcode Command Line Tools either:
+`electron-builder.yml` sets `npmRebuild: false` since `node-pty`'s N-API prebuilds are already
+ABI-compatible with Electron.
 
 ## Setting up Claude Code hooks
 

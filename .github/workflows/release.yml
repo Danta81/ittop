@@ -6,7 +6,37 @@ on:
       - 'v*'
 
 jobs:
-  release:
+  # Runs once on a cheap runner: validates the build, then pre-creates the GitHub release so
+  # the Windows and macOS build jobs below only ever have to upload assets to it. Without this,
+  # electron-builder can race when two platform jobs try to create the same release in parallel
+  # (the second POST fails with 422 already_exists), aborting before all assets upload.
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      - name: Ensure GitHub release exists
+        run: |
+          if ! gh release view "${{ github.ref_name }}" --repo ${{ github.repository }}; then
+            gh release create "${{ github.ref_name }}" --repo ${{ github.repository }} --title "${{ github.ref_name }}" --notes ""
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    needs: prepare
     runs-on: windows-latest
     permissions:
       contents: write
@@ -24,24 +54,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npm run typecheck
-
-      - run: npm test
-
-      # electron-builder 26.x has a race condition when uploading assets in parallel: two
-      # concurrent "does the release exist" checks can both see "no" and both try to create it,
-      # and the second POST fails with 422 already_exists, aborting before all assets upload.
-      # Pre-create the release here so electron-builder only ever has to upload assets to it.
-      - name: Ensure GitHub release exists
-        run: |
-          gh release view "${{ github.ref_name }}" --repo ${{ github.repository }}
-          if ($LASTEXITCODE -ne 0) {
-            gh release create "${{ github.ref_name }}" --repo ${{ github.repository }} --title "${{ github.ref_name }}" --notes ""
-          }
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and publish
+      - name: Build and publish (Windows)
         run: npm run build:win -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -57,5 +70,27 @@ jobs:
         if: steps.virustotal.outputs.vt_report_url
         run: |
           gh release edit "${{ github.ref_name }}" --notes "Installer scanned with VirusTotal: ${{ steps.virustotal.outputs.vt_report_url }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-mac:
+    needs: prepare
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm ci
+
+      # No Apple Developer ID configured, so this build is unsigned/unnotarized (see
+      # electron-builder.yml `mac.identity: null`). Gatekeeper will refuse a normal double-click
+      # open; users need "Right-click > Open" the first time, documented in the README.
+      - name: Build and publish (macOS)
+        run: npm run build:mac -- --publish always
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
