@@ -1,4 +1,4 @@
-# ittop: Multi-Workspace Manager for Claude Code on Windows
+# ittop: Multi-Workspace Manager for Claude Code, Codex & Co. on Windows
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Platform: Windows](https://img.shields.io/badge/platform-Windows-0078D6.svg)](#prerequisites)
