@@ -6,6 +6,12 @@ import type { StatusManager } from './statusManager'
 
 const SCROLLBACK_LINES = 10000
 const DEFAULT_SHELL = process.platform === 'win32' ? 'powershell.exe' : (process.env.SHELL ?? 'bash')
+// Apps launched from Finder/Dock (not a Terminal) don't inherit the user's login-shell PATH, so
+// tools installed via Homebrew/nvm/etc. (their PATH exports typically live in .zprofile /
+// .bash_profile, which only a login shell sources) are invisible to a plain interactive shell.
+// -l forces the same login-shell startup Terminal.app/iTerm2 use, matching VS Code's own default
+// on macOS for this exact reason.
+const SHELL_ARGS = process.platform === 'darwin' ? ['-l'] : []
 
 interface Session {
   proc: pty.IPty
@@ -32,7 +38,7 @@ export class PtyManager {
   start(terminalId: string, cwd: string, startCommand: string, cols = 80, rows = 30): void {
     if (this.sessions.has(terminalId)) return
 
-    const proc = pty.spawn(DEFAULT_SHELL, [], {
+    const proc = pty.spawn(DEFAULT_SHELL, SHELL_ARGS, {
       name: 'xterm-256color',
       cols,
       rows,
